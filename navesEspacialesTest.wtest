@@ -1,7 +1,6 @@
 import naves.*
 
 describe "Nave de carga" {
-
 	const naveVacia = new NaveDeCarga()
 	const naveLlena = new NaveDeCarga(carga = 500000, velocidad = 290000)
 
@@ -37,10 +36,13 @@ describe "Nave de carga" {
 		assert.equals(100, naveLlena.carga())
 	}
 
+	test "propulsion naveVacía" {
+		naveVacia.propulsar()
+		assert.equals( 20000, naveVacia.velocidad() )
+	}
 }
 
 describe "Nave de pasajeros" {
-
 	const naveSinPasajeros = new NaveDePasajeros()
 	const naveConPasajeros = new NaveDePasajeros(cantidadDePasajeros = 296, velocidad = 290000)
 
@@ -65,10 +67,24 @@ describe "Nave de pasajeros" {
 		assert.that(naveSinPasajeros.alarma())
 	}
 
+	test "propulsion naveConPasajeros" {
+		naveConPasajeros.propulsar()
+		assert.equals( 300000 , naveConPasajeros.velocidad() )
+	}
+
+	test "preparacion para el viaje naveConPasajeros" {
+		naveConPasajeros.prepararseParaViajar()
+		assert.equals( 300000 , naveConPasajeros.velocidad() )
+	}
+
+	test "encontrarse con enemigos naveSinPasajeros" {
+		naveSinPasajeros.encontrarseConEnemigo()
+		assert.equals( 20000 , naveSinPasajeros.velocidad() )
+		assert.equals( true , naveSinPasajeros.alarma() )
+	}
 }
 
 describe "Nave de combate" {
-
 	const naveEnReposo = new NaveDeCombate()
 	const naveEnAtaque = new NaveDeCombate(modo = ataque)
 
@@ -93,5 +109,32 @@ describe "Nave de combate" {
 	test "recibir amenaza en ataque" {
 		naveEnAtaque.recibirAmenaza()
 		assert.equals("Enemigo encontrado", naveEnAtaque.ultimoMensaje())
+	}
+
+	test "preparacion para el viaje naveEnAtaque" {
+		naveEnAtaque.prepararseParaViajar()
+		assert.equals( "Volviendo a la base" , naveEnAtaque.mensajesEmitidos().get(0) )
+	}
+
+	test "preparacion para el viaje naveEnReposo" {
+		naveEnReposo.prepararseParaViajar()
+		assert.equals( "Saliendo en misión" , naveEnReposo.mensajesEmitidos().get(0) )
+	}
+}
+
+describe "Nave de Carga de Residuos Radioactivos" {
+	const naveRR = new NaveDeCargaDeResiduosRadioactivos( velocidad = 10000, carga = 5000, selladoAlVacío = true )
+	const naveRR2 = new NaveDeCargaDeResiduosRadioactivos()
+
+  	test "recibe amenaza" {
+		naveRR.recibirAmenaza()
+		assert.equals( 0 , naveRR.velocidad() )
+		assert.equals( 5000 , naveRR.carga() )
+  	}
+
+	test "preparacion para el viaje naveRR" {
+		naveRR2.prepararseParaViajar()
+		assert.equals( 15000 , naveRR2.velocidad() )
+		assert.equals( true , naveRR2.selladoAlVacío() ) // preguntar
 	}
 }
